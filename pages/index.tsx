@@ -107,8 +107,8 @@ export default function Home() {
               {links.map(link => (
                 <tr key={link.code}>
                   <td>
-                    <a href={`/code/${link.code}`}>{link.code}</a>
-                  </td>
+                   <a href={`/stats/${link.code}`}>{link.code}</a>
+</td>
                   <td>{link.target_url}</td>
                   <td>{link.clicks}</td>
                   <td>{link.last_clicked || "Never"}</td>
