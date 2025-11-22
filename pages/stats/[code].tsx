@@ -1,34 +1,34 @@
 import { GetServerSideProps } from "next";
 import { query } from "../../lib/db";
 
-export default function RedirectPage() {
-  return null;
+export default function StatsPage({ link }: any) {
+  return (
+    <div>
+      <h1>Stats for: {link.code}</h1>
+      <p><strong>Target URL:</strong> {link.target_url}</p>
+      <p><strong>Total Clicks:</strong> {link.clicks}</p>
+      <p><strong>Last Clicked:</strong> {link.last_clicked ? new Date(link.last_clicked).toString() : "Never"}</p>
+      <p><strong>Created At:</strong> {new Date(link.created_at).toString()}</p>
+
+      <a href="/" style={{ color: "blue" }}>⬅ Back to Dashboard</a>
+    </div>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const code = context.params?.code as string;
 
-  // Fetch the link
-  const res = await query("SELECT * FROM links WHERE code = $1", [code]);
+  const result = await query("SELECT * FROM links WHERE code = $1", [code]);
 
-  if (res.rowCount === 0) {
+  if (result.rowCount === 0) {
     return {
       notFound: true,
     };
   }
 
-  const link = res.rows[0];
-
-  // Update click count
-  await query(
-    "UPDATE links SET clicks = clicks + 1, last_clicked = NOW() WHERE code = $1",
-    [code]
-  );
-
   return {
-    redirect: {
-      destination: link.target_url,
-      permanent: false,
+    props: {
+      link: result.rows[0],
     },
   };
 };
